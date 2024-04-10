@@ -23,6 +23,17 @@
           <version>4.13.2</version> <!-- 使用最新的JUnit 4版本 -->
           <scope>test</scope>
       </dependency>
+		<dependency>
+			<groupId>com.google.maps</groupId>
+			<artifactId>google-maps-services</artifactId>
+			<version>0.18.1</version>
+		</dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.3</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
