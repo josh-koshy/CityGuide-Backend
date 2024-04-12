@@ -5,4 +5,4 @@ The backend program develop base on Maven so before u start plz go download Mave
 
 To run the backend
 1. mvn clean install
-2. java -jar target/my-app-1.0-SNAPSHOT-jar-with-dependencies.jar
+2. java -jar target/my-app-1.0-SNAPSHOT.jar
