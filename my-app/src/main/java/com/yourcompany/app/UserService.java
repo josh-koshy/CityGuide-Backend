@@ -42,4 +42,15 @@ public class UserService {
             docRef.set(newUser).get();
         }
     }
+
+    public boolean checkUserIsActive(String uid) throws ExecutionException, InterruptedException {
+        DocumentReference docRef = db.collection("users").document(uid);
+        if (docRef.get().get().exists()) {
+            Boolean isActive = docRef.get().get().getBoolean("isActive");
+            return isActive != null && isActive;
+        } else {
+            return false;
+        }
+    }
+    
 }

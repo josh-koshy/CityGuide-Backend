@@ -38,24 +38,31 @@ public class Controller {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
-        String idToken = loginData.get("token");
+        public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData) {
+            String idToken = loginData.get("idToken");
 
-        try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            String uid = decodedToken.getUid();
-            userService.checkOrCreateUser(uid);
-            Map<String, String> response = new HashMap<>();
-            response.put("uid", uid);
-            response.put("email", decodedToken.getEmail());
-            response.put("message", "User checked or created successfully.");
-            return ResponseEntity.ok(response);
-        } catch (FirebaseAuthException e) {
-            logger.error("Authentication error", e);
-            return ResponseEntity.status(500).body("Authentication failed: " + e.getMessage());
-        } catch (Exception e) {
-            logger.error("Failed to process login", e);
-            return ResponseEntity.status(500).body("Failed to check or create user: " + e.getMessage());
+            try {
+                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+                String uid = decodedToken.getUid();
+
+                boolean isActive = userService.checkUserIsActive(uid);
+                if (!isActive) {
+                    userService.checkOrCreateUser(uid);
+                }
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("uid", uid);
+                response.put("isActive", isActive);
+                response.put("message", "User status checked successfully.");
+
+                return ResponseEntity.ok(response);
+            } catch (FirebaseAuthException e) {
+                logger.error("Authentication error", e);
+                return ResponseEntity.status(500).body("Authentication failed: " + e.getMessage());
+            } catch (Exception e) {
+                logger.error("Failed to process login", e);
+                return ResponseEntity.status(500).body("Server error: " + e.getMessage());
+            }
         }
-    }
+
 }
