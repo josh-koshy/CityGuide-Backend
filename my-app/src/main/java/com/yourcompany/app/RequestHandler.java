@@ -12,26 +12,21 @@ import com.google.firebase.auth.FirebaseToken;
 @Component
 public class RequestHandler {
 
-    public PlacesSearchResponse getNearbyPlaces(double latitude, double longitude, int radius) {
-        try {
-            GeoApiContext context = new GeoApiContext.Builder()
-                .apiKey("AIzaSyC7SRSipgUCOxnWLsE6Qo0P6YbkB7JJpUM")  // Replace "YOUR_API_KEY" with the actual API key
-                .build();
-            LatLng location = new LatLng(latitude, longitude);
-            return PlacesApi.nearbySearchQuery(context, location).radius(radius).await();
-        } catch (ApiException | InterruptedException | java.io.IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private final GeoApiContext context;
+
+    public RequestHandler() {
+        this.context = new GeoApiContext.Builder()
+            .apiKey("AIzaSyC7SRSipgUCOxnWLsE6Qo0P6YbkB7JJpUM") // Ensure this API key is securely managed
+            .build();
     }
 
-    public String getSecureData(String idToken) {
-        try {
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            return "Access granted for UID: " + decodedToken.getUid();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Authentication failed: " + e.getMessage();
-        }
+    public PlacesSearchResponse getNearbyPlaces(double latitude, double longitude, int radius) throws ApiException, InterruptedException, java.io.IOException {
+        LatLng location = new LatLng(latitude, longitude);
+        return PlacesApi.nearbySearchQuery(context, location).radius(radius).await();
+    }
+
+    public String getSecureData(String idToken) throws Exception {
+        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        return "Access granted for UID: " + decodedToken.getUid();
     }
 }
