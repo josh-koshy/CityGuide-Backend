@@ -52,5 +52,8 @@ public class UserService {
             return false;
         }
     }
-    
+    public void updateUserProfile(String uid, Map<String, Object> profileData) throws ExecutionException, InterruptedException {
+        DocumentReference docRef = db.collection("users").document(uid);
+        docRef.update(profileData).get();  // This will update existing fields or add new fields
+    }
 }
