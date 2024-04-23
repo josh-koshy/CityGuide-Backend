@@ -15,6 +15,14 @@
         <h2>Update Profile</h2>
         <form onsubmit="updateProfile(event)">
             <div>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div>
                 <label for="age">Age:</label>
                 <input type="number" id="age" name="age" min="0" required>
             </div>
@@ -27,14 +35,34 @@
                     <option value="other">Other</option>
                 </select>
             </div>
+            <div>
+                <label for="occupation">Occupation:</label>
+                <select id="occupation" name="occupation" required>
+                    <option value="">Select Occupation</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="engineer">Engineer</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="artist">Artist</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="1234567890">
+            </div>
             <button type="submit">Update</button>
         </form>
     </div>
     <script>
       async function updateProfile(event) {
         event.preventDefault();
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
         const age = document.getElementById('age').value;
         const gender = document.getElementById('gender').value;
+        const occupation = document.getElementById('occupation').value;
+        const phone = document.getElementById('phone').value;
 
         try {
           const response = await fetch('http://localhost:8080/updateProfile', {
@@ -42,7 +70,14 @@
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ age: age, gender: gender })
+            body: JSON.stringify({ 
+              firstName: firstName,
+              lastName: lastName,
+              age: age, 
+              gender: gender,
+              occupation: occupation,
+              phone: phone
+            })
           });
 
           if (!response.ok) {
