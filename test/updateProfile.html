@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .profile-container { margin-top: 50px; text-align: center; }
+        input, select, button { margin-top: 10px; padding: 10px; width: 20%; min-width: 250px; }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Update Profile</h2>
+        <form onsubmit="updateProfile(event)">
+            <div>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div>
+                <label for="age">Age:</label>
+                <select id="age" name="age" required>
+                    <option value="">Select Age Range</option>
+                    <option value="0-18">0-18</option>
+                    <option value="18-21">18-21</option>
+                    <option value="21-25">21-25</option>
+                    <option value="25-35">25-35</option>
+                    <option value="35-60">35-60</option>
+                    <option value="60-90">60-90</option>
+                </select>
+            </div>
+            <div>
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="occupation">Occupation:</label>
+                <select id="occupation" name="occupation" required>
+                    <option value="">Select Occupation</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="engineer">Engineer</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="artist">Artist</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="1234567890">
+            </div>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+    <script>
+      async function updateProfile(event) {
+    event.preventDefault();
+    const uid = localStorage.getItem('userUID');  // 获取存储的 UID
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const age = document.getElementById('age').value;
+    const gender = document.getElementById('gender').value;
+    const occupation = document.getElementById('occupation').value;
+    const phone = document.getElementById('phone').value;
+
+    try {
+        const response = await fetch('http://localhost:8080/updateProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                uid: uid,
+                firstName: firstName,
+                lastName: lastName,
+                age: age,
+                gender: gender,
+                occupation: occupation,
+                phone: phone
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update profile');
+        }
+
+        const result = await response.json();
+        alert('Profile updated successfully');
+        window.location.href = '2.html';  // Redirect to main page or dashboard
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Failed to update profile: ' + error.message);
+    }
+}
+
+    </script>
+</body>
+</html>
