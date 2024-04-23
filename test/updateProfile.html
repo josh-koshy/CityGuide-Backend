@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .profile-container { margin-top: 50px; text-align: center; }
+        input, select, button { margin-top: 10px; padding: 10px; width: 20%; min-width: 250px; }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Update Profile</h2>
+        <form onsubmit="updateProfile(event)">
+            <div>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" min="0" required>
+            </div>
+            <div>
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+    <script>
+      async function updateProfile(event) {
+        event.preventDefault();
+        const age = document.getElementById('age').value;
+        const gender = document.getElementById('gender').value;
+
+        try {
+          const response = await fetch('http://localhost:8080/updateProfile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ age: age, gender: gender })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to update profile');
+          }
+
+          const result = await response.json();
+          alert('Profile updated successfully');
+          window.location.href = '2.html';  // Redirect to main page or dashboard
+        } catch (error) {
+          console.error('Error updating profile:', error);
+          alert('Failed to update profile: ' + error.message);
+        }
+      }
+    </script>
+</body>
+</html>

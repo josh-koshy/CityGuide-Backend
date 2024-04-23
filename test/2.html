@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinate Input</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        #placesList {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7SRSipgUCOxnWLsE6Qo0P6YbkB7JJpUM"></script>
+    <script>
+        let map;
+        let markers = [];
+
+        function initMap() {
+            const rochester = { lat: 43.1566, lng: -77.6088 }; // Default location
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: rochester
+            });
+        }
+
+        async function sendCoordinates() {
+            const latitude = parseFloat(document.getElementById('latitude').value);
+            const longitude = parseFloat(document.getElementById('longitude').value);
+            const radius = parseInt(document.getElementById('radius').value);
+
+            const url = new URL('http://localhost:8080/getNearbyPlaces');
+            const params = { latitude: latitude, longitude: longitude, radius: radius };
+            url.search = new URLSearchParams(params).toString();
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                displayPlaces(data);
+            } catch (error) {
+                console.error('There was an error!', error);
+            }
+        }
+
+        function displayPlaces(data) {
+            // Clear existing markers
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            data.results.forEach((place) => {
+                const position = new google.maps.LatLng(place.geometry.location.lat, place.geometry.location.lng);
+                const marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    title: place.name
+                });
+                markers.push(marker);
+            });
+
+            // Center the map on the first result
+            if (data.results.length > 0) {
+                map.setCenter(markers[0].getPosition());
+            }
+        }
+    </script>
+</head>
+<body onload="initMap()">
+    <h1>Enter Coordinates</h1>
+    <div>
+        <label for="latitude">Latitude:</label>
+        <input type="number" id="latitude" name="latitude" required>
+        <label for="longitude">Longitude:</label>
+        <input type="number" id="longitude" name="longitude" required>
+        <label for="radius">Radius (in meters):</label>
+        <input type="number" id="radius" name="radius" required>
+        <button onclick="sendCoordinates()">Send Coordinates</button>
+    </div>
+    <h2>Map:</h2>
+    <div id="map"></div>
+    <h2>Results:</h2>
+    <pre id="result"></pre>
+</body>
+</html>
