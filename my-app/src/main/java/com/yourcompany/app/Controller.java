@@ -66,14 +66,17 @@ public class Controller {
         }
         @PostMapping("/updateProfile")
         public ResponseEntity<?> updateProfile(@RequestBody Map<String, Object> profileData) {
-        String uid = profileData.remove("uid").toString(); // Ensure UID is passed from the client
-
-        try {
-            userService.updateUserProfile(uid, profileData);
-            return ResponseEntity.ok("Profile updated successfully.");
-        } catch (Exception e) {
-            logger.error("Failed to update user profile", e);
-            return ResponseEntity.status(500).body("Failed to update profile: " + e.getMessage());
+            String uid = (String) profileData.get("uid");
+            if (uid == null || uid.isEmpty()) {
+                return ResponseEntity.badRequest().body("{\"error\":\"UID is required.\"}");
+            }
+            profileData.remove("uid"); // Now remove uid after checking it's not null or empty
+            try {
+                userService.updateUserProfile(uid, profileData);
+                return ResponseEntity.ok("{\"message\":\"Profile updated successfully.\"}");
+            } catch (Exception e) {
+                logger.error("Failed to update user profile", e);
+                return ResponseEntity.status(500).body("{\"error\":\"Failed to update profile: " + e.getMessage() + "\"}");
+            }
         }
-    }
 }
