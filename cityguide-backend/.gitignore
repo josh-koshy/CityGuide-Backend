@@ -1,0 +1,5 @@
+*.json
+target/
+test/
+resources/
+error_log.txt
